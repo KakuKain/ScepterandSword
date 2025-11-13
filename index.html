@@ -8,19 +8,73 @@
 <style>
 body { 
   font-family: "Microsoft JhengHei", sans-serif; 
-  line-height: 1.5;
-  margin: 20px;
+  background-color: #f6f8fa;
+  line-height: 1.6;
+  margin: 30px;
+  color: #333;
 }
 .upgrade {
-  max-width: 500px;
+  max-width: 520px;
+  background: white;
+  padding: 25px 28px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
-.result { margin-top: 20px; white-space: pre-wrap; font-weight: 500; }
-.countdown { margin-top: 10px; font-size: 16px; color: #d33; }
+
+/* 標題 */
+.page-title {
+  text-align: center;
+  font-weight: 700;
+  color: #2b4a7d;
+  margin-bottom: 24px;
+}
+
+/* 自訂按鈕樣式 */
+.btn-custom {
+  background-color: #4a6ee0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  transition: background 0.25s, transform 0.15s;
+}
+.btn-custom:hover {
+  background-color: #3b5cc6;
+  transform: translateY(-1px);
+}
+.btn-custom:active {
+  transform: scale(0.98);
+}
+
+/* 清除按鈕樣式 */
+.btn-clear {
+  background-color: #b4b4b4;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  transition: background 0.25s;
+}
+.btn-clear:hover {
+  background-color: #999;
+}
+
+.result {
+  margin-top: 20px;
+  white-space: pre-wrap;
+  font-weight: 500;
+  color: #2c3e50;
+}
+.countdown { 
+  margin-top: 10px; 
+  font-size: 16px; 
+  color: #c0392b; 
+}
 </style>
 </head>
 <body>
 <div class="container upgrade">
-  <h3 class="mb-4 text-center fw-bold">杖劍傳說 - 升級時間計算機</h3>
+  <h3 class="page-title">杖劍傳說 - 升級時間計算機</h3>
 
   <div class="row g-3">
     <div class="col-12 col-md-6">
@@ -43,7 +97,7 @@ body {
       <label class="form-label">登記當前經驗時間（日期＋時間）</label>
 	  <div class="d-flex" style="gap: 8px;">
 		<input id="recordTime" type="datetime-local" class="form-control" style="max-width:70%;">		
-		<button id="updateTimeBtn" class="btn btn-success flex-grow-1">更新時間</button>
+		<button id="updateTimeBtn" class="btn btn-custom flex-grow-1">更新時間</button>
 	  </div>
     </div>
   </div>
@@ -61,7 +115,7 @@ body {
   
 
   <div class="d-flex flex-wrap gap-2 mb-3">
-    <button id="clearBtn" class="btn btn-secondary flex-grow-1">清除所有資料</button>
+    <button id="clearBtn" class="btn btn-clear flex-grow-1">清除所有資料</button>
   </div>
 
   <div class="result" id="result"></div>
