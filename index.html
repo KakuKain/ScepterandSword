@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>升級時間計算器</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+body { font-family: "Microsoft JhengHei", sans-serif; max-width: 500px; margin: 40px auto; }
+label { display: block; margin-top: 12px; }
+input { width: 100%; padding: 6px; font-size: 14px; }
+button { margin-top: 15px; padding: 8px 16px; margin-right: 8px; }
+.result { margin-top: 20px; font-weight: bold; white-space: pre-wrap; }
+.countdown { margin-top: 10px; font-size: 16px; color: #d33; }
+</style>
+</head>
+<body>
+<h2>升級時間計算器</h2>
+
+<label>目前等級：<input id="level" type="number"></label>
+<label>總經驗：<input id="totalExp" type="number"></label>
+<label>目前經驗：<input id="currentExp" type="number"></label>
+<label>經驗／時：<input id="expPerHour" type="number"></label>
+<label>登記當前經驗時間（日期＋時間）：<input id="recordTime" type="datetime-local"></label>
+
+<button id="updateTimeBtn">更新到現在時間</button>
+<button id="clearBtn">清除所有資料</button>
+
+<div class="result" id="result"></div>
+<div class="countdown" id="countdown"></div>
+
+<script>
+$(document).ready(function() {
+  let countdownInterval;
+
+  // 載入上次輸入
+  const saved = localStorage.getItem("levelCalcData");
+  if(saved){
+    const data = JSON.parse(saved);
+    $("#level").val(data.level);
+    $("#totalExp").val(data.totalExp);
+    $("#currentExp").val(data.currentExp);
+    $("#expPerHour").val(data.expPerHour);
+    $("#recordTime").val(data.recordTime);
+  }
+
+  function saveData(){
+    const data = {
+      level: $("#level").val(),
+      totalExp: $("#totalExp").val(),
+      currentExp: $("#currentExp").val(),
+      expPerHour: $("#expPerHour").val(),
+      recordTime: $("#recordTime").val()
+    };
+    localStorage.setItem("levelCalcData", JSON.stringify(data));
+  }
+
+  function startCountdown(levelUpTime){
+    if(countdownInterval) clearInterval(countdownInterval);
+
+    function updateCountdown(){
+      const now = new Date();
+      let diff = levelUpTime - now;
+      if(diff <= 0){
+        $("#countdown").text("已升等！");
+        clearInterval(countdownInterval);
+        return;
+      }
+      const hours = Math.floor(diff/3600000);
+      diff -= hours*3600000;
+      const minutes = Math.floor(diff/60000);
+      diff -= minutes*60000;
+      const seconds = Math.floor(diff/1000);
+      $("#countdown").text(`距離升等剩餘：${hours} 小時 ${minutes} 分 ${seconds} 秒`);
+    }
+
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+  }
+
+  function calculate(){
+    const level = Number($("#level").val());
+    const totalExp = Number($("#totalExp").val());
+    const currentExp = Number($("#currentExp").val());
+    const expPerHour = Number($("#expPerHour").val());
+    const recordTimeVal = $("#recordTime").val();
+
+    if(!recordTimeVal || !totalExp || !currentExp || !expPerHour){
+      $("#result").text("請輸入完整資料。");
+      $("#countdown").text("");
+      return;
+    }
+
+    const recordTime = new Date(recordTimeVal);
+    const neededExp = totalExp - currentExp;
+    const hoursToLevelUp = neededExp / expPerHour;
+    const levelUpTime = new Date(recordTime.getTime() + hoursToLevelUp*3600000);
+
+    const resultText = `目前等級：${level}
+所需經驗：${neededExp.toLocaleString()}
+預計升級時間：${levelUpTime.toLocaleString()}`;
+    $("#result").text(resultText);
+
+    saveData();
+    startCountdown(levelUpTime);
+  }
+
+  // 監聽所有輸入欄位變化，自動計算
+  $("#level, #totalExp, #currentExp, #expPerHour, #recordTime").on("input change", calculate);
+
+  // 更新時間按鈕
+  $("#updateTimeBtn").click(function(){
+    const now = new Date();
+    const pad = n => n.toString().padStart(2,"0");
+    const yyyy = now.getFullYear();
+    const mm = pad(now.getMonth()+1);
+    const dd = pad(now.getDate());
+    const hh = pad(now.getHours());
+    const mi = pad(now.getMinutes());
+    $("#recordTime").val(`${yyyy}-${mm}-${dd}T${hh}:${mi}`);
+    calculate();
+  });
+
+  // 清除所有資料按鈕
+  $("#clearBtn").click(function(){
+    $("#level, #totalExp, #currentExp, #expPerHour, #recordTime").val("");
+    $("#result").text("");
+    $("#countdown").text("");
+    if(countdownInterval) clearInterval(countdownInterval);
+    localStorage.removeItem("levelCalcData");
+  });
+
+  // 頁面載入時自動計算
+  calculate();
+});
+</script>
+</body>
+</html>
