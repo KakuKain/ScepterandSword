@@ -13,18 +13,29 @@ $(document).ready(function () {
     "結果不是壞的，只是慢一點 ( ´･ω･` )"
   ];
 
-  function appendMsg(text, type) {
-    $("#chatArea").append(`<div class="message ${type}">${text}</div>`);
+  function appendMsg(content, type) {
+    $("#chatArea").append(`<div class="message ${type}">${content}</div>`);
     $("#chatArea").scrollTop($("#chatArea")[0].scrollHeight);
   }
 
   function answerUser(action, input) {
-    if (action === "lot") appendMsg("擲筊結果：吉凶隨機 (・・ )", "msg-bot");
-    else if (action === "paper") {
-      const pick = papers[Math.floor(Math.random() * papers.length)];
-      appendMsg("抽籤結果：" + pick, "msg-bot");
+    if(action === "lot") {
+      // 擲筊 icon
+      const lotIndex = Math.floor(Math.random() * 6) + 1;
+      const bobeiIndex = Math.floor(Math.random() * 4) + 1;
+      const content = `
+        <img src="./img/lots_${lotIndex}.png" alt="lots">
+        <img src="./img/bobei_${bobeiIndex}.png" alt="bobei">
+      `;
+      appendMsg(content, "msg-bot");
     }
-    else appendMsg(input, "msg-bot");
+    else if(action === "paper") {
+      const pick = papers[Math.floor(Math.random() * papers.length)];
+      appendMsg(pick, "msg-bot");
+    }
+    else {
+      appendMsg(input, "msg-bot");
+    }
   }
 
   $("#btn-witch").click(() => $("#witchModal").fadeIn(150));
