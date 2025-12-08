@@ -111,12 +111,13 @@ body {
 }
 
 .message {
+  max-width: 90%;
   padding: 8px 10px;
   margin-bottom: 10px;
   border-radius: 6px;
   font-size: 0.95rem;
 }
-.msg-user { background: #e3f0ff; text-align: right; }
+.msg-user { background: #e3f0ff; margin-left: auto;}
 .msg-bot { background: #fff3df; }
 
 .input-row {
