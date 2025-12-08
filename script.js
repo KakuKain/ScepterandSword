@@ -74,8 +74,17 @@ $(document).ready(function () {
   });
 
   // 打開/關閉 modal
-  $("#btn-witch").click(() => $("#witchModal").fadeIn(150));
-  $("#closeModal").click(() => $("#witchModal").fadeOut(150));
+// toggle 開關 modal
+$("#btn-witch").click(() => {
+  if ($("#witchModal").is(":visible")) {
+    $("#witchModal").fadeOut(150);
+  } else {
+    $("#witchModal").fadeIn(150);
+  }
+});
+  $("#closeModal").click(() => {
+    $("#witchModal").fadeOut(150);
+  });
 
   // 送出訊息事件（綁定一次即可）
   function sendMessage() {
