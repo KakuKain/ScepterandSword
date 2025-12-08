@@ -143,3 +143,7 @@ body {
   color: #fff;
   border-radius: 8px;
 }
+
+#userInput {
+	flex:1;
+}
