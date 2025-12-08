@@ -28,14 +28,22 @@ $(document).ready(function () {
 
   // 回應使用者
   function answerUser(action, input) {
-    if (action === "lot") {
+    if (action === "御神籤") {
+      const result = drawLots();
+      const content = `<img src="./img/lots_${result.lotIndex}.jpg" alt="lots" style="width:60px;height:60px;object-fit:cover;">`;
+      appendMsg(content, "msg-bot");
+    } else if (action === "擲筊") {
+      const result = drawLots();
+      const content = `<img src="./img/bobei_${result.bobeiIndex}.jpg" alt="bobei" style="width:60px;height:60px;object-fit:cover;">`;
+      appendMsg(content, "msg-bot");
+    } else if (action === "籤筊") {
       const result = drawLots();
       const content = `
-        <img src="./img/lots_${result.lotIndex}.jpg" alt="lots" style="width:40px; height:40px; object-fit:cover;">
-        <img src="./img/bobei_${result.bobeiIndex}.jpg" alt="bobei" style="width:40px; height:40px; object-fit:cover;">
+        <img src="./img/lots_${result.lotIndex}.jpg" alt="lots" style="width:60px;height:60px;object-fit:cover;">
+        <img src="./img/bobei_${result.bobeiIndex}.jpg" alt="bobei" style="width:60px;height:60px;object-fit:cover;">
       `;
       appendMsg(content, "msg-bot");
-    } else if (action === "paper") {
+    } else if (action === "籤詩") {
       const levels = Object.keys(poems);
       if (levels.length === 0) {
         appendMsg("籤詩尚未載入，請稍候…", "msg-bot");
