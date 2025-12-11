@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>賽季計算器</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="header.css" />
+		<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+		<style>
+			:root {
+				--bg: #f6f8fb;
+				--card: #ffffff;
+				--muted: #6c757d;
+				--primary: #4a6ee0;
+				--accent: #3b5cc6;
+				--glass: rgba(255, 255, 255, 0.6);
+				--radius: 12px;
+			}
+			html,
+			body {
+				height: 100%;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+				font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, -apple-system, "Segoe UI",
+					Roboto, "Helvetica Neue", Arial;
+				background-color: #f6f8fa;
+				color: #333;
+				line-height: 1.6;
+			}
+			.container {
+				max-width: 520px;
+				background: white;
+				padding: 25px 28px;
+				border-radius: 16px;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+				margin: 24px auto;
+			}
+			h1 {
+				letter-spacing: 0.6px;
+				margin-bottom: 18px;
+				color: var(--primary);
+				text-align: center;
+				font-weight: 700;
+				font-size: 1.4rem;
+			}
+			.section {
+				margin-bottom: 18px;
+				padding: 0;
+				background: transparent;
+				border-radius: 0;
+				box-shadow: none;
+			}
+			.section-head {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 12px;
+			}
+			.section-head h4 {
+				margin: 0;
+				font-weight: 700;
+				font-size: 1rem;
+				color: #2b4a7d;
+			}
+			.score-display {
+				background: #4a6ee0;
+				color: #fff;
+				padding: 8px 12px;
+				border-radius: 8px;
+				font-weight: 700;
+				min-width: 72px;
+				text-align: center;
+				box-shadow: none;
+				font-size: 0.95rem;
+			}
+			.input-row {
+				display: flex;
+				gap: 8px;
+				align-items: center;
+			}
+			input.form-control {
+				border-radius: 10px;
+				border: 1px solid #e6edf6;
+				padding: 10px;
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+			}
+			.form-control:focus {
+				box-shadow: 0 8px 20px rgba(74, 110, 224, 0.08);
+				border-color: var(--primary);
+				outline: none;
+			}
+			/* relic */
+			.relic-group {
+                margin-bottom: 8px;
+				border-radius: 10px;
+				padding: 12px;
+				background: linear-gradient(180deg, #fff, #fbfdff);
+				border: 1px solid #eef3fb;
+                text-wrap: pretty;
+			}
+			details.relic-details summary {
+				list-style: none;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+			details.relic-details summary::-webkit-details-marker {
+				display: none;
+			}
+			details.relic-details summary::after {
+				content: "\25BE";
+				transition: transform 0.18s ease;
+				color: var(--muted);
+			}
+			details.relic-details[open] summary::after {
+				transform: rotate(180deg);
+			}
+			.relic-big {
+				max-width: 220px;
+				border-radius: 8px;
+			}
+			.relic-small {
+				border-radius: 8px;
+			}
+			.relic-grid {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 8px;
+			}
+			@media (max-width: 760px) {
+				.relic-grid {
+					grid-template-columns: repeat(2, 1fr);
+				}
+			}
+			@media (max-width: 420px) {
+				.relic-grid {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			/* equip/skill layout */
+			.equip {
+				flex: 0 0 48%;
+			}
+			.skill {
+				flex: 0 0 23%;
+			}
+			@media (max-width: 576px) {
+				.equip,
+				.skill,
+				.beast {
+					flex: 0 0 auto;
+				}
+			}
+
+			/* modal & floating */
+			.floating-btn {
+				position: fixed;
+				right: calc((100vw - 700px) / 2 + 20px);
+				bottom: 28px;
+				width: 56px;
+				height: 56px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, var(--primary), var(--accent));
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #fff;
+				border: none;
+				box-shadow: 0 10px 30px rgba(59, 92, 198, 0.18);
+				z-index: 120;
+			}
+			@media (max-width: 880px) {
+				.floating-btn {
+					right: 28px;
+				}
+			}
+			@media (max-width: 576px) {
+				.floating-btn {
+					right: 18px;
+					bottom: 18px;
+				}
+			}
+			.modal-overlay {
+				position: fixed;
+				inset: 0;
+				background: rgba(8, 15, 40, 0.4);
+				display: none;
+				z-index: 110;
+			}
+			.modal-overlay.show {
+				display: block;
+			}
+			#dataModal {
+				position: fixed;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				background: var(--card);
+				padding: 20px;
+				border-radius: 12px;
+				box-shadow: 0 18px 50px rgba(32, 44, 88, 0.12);
+				z-index: 130;
+				max-width: 420px;
+				width: 92%;
+				display: none;
+			}
+			#dataModal.show {
+				display: block;
+			}
+
+			/* pretty text wrap */
+			.pretty-text {
+				overflow-wrap: break-word;
+				word-break: break-word;
+				hyphens: auto;
+			}
+
+			.badge-custom {
+				background: rgba(74, 110, 224, 0.12);
+				color: var(--primary);
+				padding: 6px 8px;
+				border-radius: 8px;
+				font-weight: 700;
+			}
+			/* input grid layout */
+			.input-grid {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 8px;
+			}
+			/* slot compact enhancements */
+			.star-icon {
+				color: #f5c542;
+				font-size: 18px;
+				width: 28px;
+				text-align: center;
+				display: inline-block;
+			}
+			.has-important {
+				background: linear-gradient(90deg, #fffaf0, #fff3d7);
+			}
+			.slot-columns .list-group {
+				max-height: 300px;
+				overflow: auto;
+			}
+			.section-head .icon {
+				width: 18px;
+				height: 18px;
+				display: inline-block;
+				margin-right: 8px;
+				vertical-align: middle;
+				fill: var(--primary);
+			}
+			/* slot columns compact style */
+			.slot-columns .list-group-item {
+				display: grid;
+				grid-template-columns: 28px 1fr 72px;
+				align-items: center;
+				gap: 8px;
+				padding-top: .4rem;
+				padding-bottom: .4rem;
+			}
+			.slot-columns h6 {
+				font-size: 0.95rem;
+				margin-bottom: 6px;
+			}
+			/* 詳按鈕正方形 */
+			.btn-outline-secondary[data-bs-target="#expCalc"] {
+				width: 40px;
+				height: 40px;
+				padding: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			/* 手機版：角色等級 & 原初之心上下排列 */
+			@media (max-width: 576px) {
+				.d-flex.gap-3.mb-2 {
+					flex-direction: column;
+					gap: 12px !important;
+				}
+				.d-flex.flex-wrap.gap-2 {
+					display: grid;
+					grid-template-columns: repeat(2, 1fr);
+					flex-wrap: nowrap;
+				}
+			}
+			@media (max-width: 768px) {
+				.slot-columns .list-group-item div[style] {
+					min-width: 0;
+				}
+				@media (max-width: 420px) {
+					.slot-columns .list-group-item { grid-template-columns: 28px 1fr 56px; }
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- 導航 Header -->
+		<nav class="page-nav">
+			<div class="nav-content">
+				<h2 class="nav-title">計算機</h2>
+				<div class="nav-links">
+					<a href="index.html" class="nav-link">升級計算機</a>
+					<a href="season.html" class="nav-link active">賽季計算機</a>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<h1 class="text-center mb-4">賽季計算器</h1>
+
+			<div class="mb-3">
+				<label class="form-label">選擇賽季</label>
+				<select id="seasonSelect" class="form-select">
+					<option value="1" disabled title="第一賽季不可選">第一賽季</option>
+					<option value="2" selected>第二賽季</option>
+					<option value="3" disabled title="第三賽季不可選">第三賽季</option>
+				</select>
+			</div>
+
+			<div class="section">
+				<div class="section-head">
+					<h4 class="m-0"><span class="icon" aria-hidden="true">🧸</span>角色</h4>
+					<span class="score-display" id="roleScoreDisplay">0</span>
+				</div>
+				<div class="d-flex gap-3 mb-2">
+					<div class="flex-grow-1">
+						<label class="form-label small mb-1">角色等級</label>
+						<div class="d-flex gap-1">
+							<input
+								type="number"
+								id="roleLevel"
+								class="form-control"
+								value="150"
+								step="0.01"
+                                style="flex:1;"
+							/>
+							<button
+								type="button"
+								class="btn btn-sm btn-outline-secondary"
+								data-bs-toggle="collapse"
+								data-bs-target="#expCalc"
+								aria-expanded="false"
+							>
+								詳
+							</button>
+						</div>
+						<div id="expCalc" class="collapse mt-2 p-2 bg-light rounded">
+							<label class="form-label small mb-1">總經驗</label>
+							<input
+								type="number"
+								id="totalExp"
+								class="form-control form-control-sm mb-2"
+								value="0"
+							/>
+							<label class="form-label small mb-1">當前經驗</label>
+							<input
+								type="number"
+								id="currentExp"
+								class="form-control form-control-sm"
+							/>
+							<button
+								type="button"
+								class="btn btn-sm btn-primary mt-2 w-100"
+								id="calcLevel"
+							>
+								計算等級
+							</button>
+						</div>
+					</div>
+					<div id="lastCoreDiv" class="flex-grow-1">
+						<label class="form-label small mb-1">已擁有原初之心</label>
+						<input type="number" id="lastCore" class="form-control" value="0" />
+					</div>
+				</div>
+			</div>
+
+			<div class="section">
+				<div class="section-head">
+					<h4 class="m-0"><span class="icon" aria-hidden="true">🧥</span>裝備</h4>
+					<span class="score-display" id="equipScoreDisplay">0</span>
+				</div>
+				<div class="input-grid mb-2">
+					<input type="number" class="equip form-control" value="130" />
+					<input type="number" class="equip form-control" value="130" />
+					<input type="number" class="equip form-control" value="130" />
+					<input type="number" class="equip form-control" value="130" />
+					<input type="number" class="equip form-control" value="130" />
+				</div>
+			</div>
+
+			<div class="section">
+				<div class="section-head">
+					<h4 class="m-0"><span class="icon" aria-hidden="true">⚔️</span>技能</h4>
+					<span class="score-display" id="skillScoreDisplay">0</span>
+				</div>
+				<div class="input-grid mb-2">
+					<input type="number" class="skill form-control" value="130" />
+					<input type="number" class="skill form-control" value="130" />
+					<input type="number" class="skill form-control" value="130" />
+					<input type="number" class="skill form-control" value="130" />
+					<input type="number" class="skill form-control" value="130" />
+					<input type="number" class="skill form-control" value="130" />
+					<input type="number" class="skill form-control" value="130" />
+					<input type="number" class="skill form-control" value="130" />
+				</div>
+			</div>
+
+			<div class="section">
+				<div class="section-head">
+					<h4 class="m-0"><span class="icon" aria-hidden="true">😺</span>幻獸</h4>
+					<span class="score-display" id="beastScoreDisplay">0</span>
+				</div>
+				<div class="input-grid mb-2">
+					<input type="number" class="beast form-control" value="130" />
+					<input type="number" class="beast form-control" value="130" />
+					<input type="number" class="beast form-control" value="130" />
+					<input type="number" class="beast form-control" value="130" />
+				</div>
+			</div>
+
+			<div class="section">
+				<div class="section-head">
+					<h4 class="m-0"><span class="icon" aria-hidden="true">📺</span>古遺物</h4>
+					<span class="score-display" id="relicScoreDisplay">0</span>
+				</div>
+				<div id="relicContainer">
+					<div class="relic-group" data-index="0">
+						<details class="relic-details">
+							<summary>
+								<div class="d-flex align-items-center w-100">
+									<label class="me-2 small text-muted mb-0">平均等級</label>
+									<input
+										type="number"
+										class="relic-big form-control"
+										data-group="0"
+										value="13"
+										aria-label="屬性1 平均等級"
+									/>
+								</div>
+							</summary>
+							<div class="d-flex gap-2 mb-2 mt-2">
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="0"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="0"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="0"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="0"
+									value="13"
+								/>
+							</div>
+						</details>
+					</div>
+					<div class="relic-group" data-index="1">
+						<details class="relic-details">
+							<summary>
+								<div class="d-flex align-items-center w-100">
+									<label class="me-2 small text-muted mb-0">平均等級</label>
+									<input
+										type="number"
+										class="relic-big form-control"
+										data-group="1"
+										value="13"
+										aria-label="屬性2 平均等級"
+									/>
+								</div>
+							</summary>
+							<div class="d-flex gap-2 mb-2 mt-2">
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="1"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="1"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="1"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="1"
+									value="13"
+								/>
+							</div>
+						</details>
+					</div>
+					<div class="relic-group" data-index="2">
+						<details class="relic-details">
+							<summary>
+								<div class="d-flex align-items-center w-100">
+									<label class="me-2 small text-muted mb-0">平均等級</label>
+									<input
+										type="number"
+										class="relic-big form-control"
+										data-group="2"
+										value="13"
+										aria-label="屬性3 平均等級"
+									/>
+								</div>
+							</summary>
+							<div class="d-flex gap-2 mb-2 mt-2">
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="2"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="2"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="2"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="2"
+									value="13"
+								/>
+							</div>
+						</details>
+					</div>
+					<div class="relic-group" data-index="3">
+						<details class="relic-details">
+							<summary>
+								<div class="d-flex align-items-center w-100">
+									<label class="me-2 small text-muted mb-0">平均等級</label>
+									<input
+										type="number"
+										class="relic-big form-control"
+										data-group="3"
+										value="13"
+										aria-label="屬性4 平均等級"
+									/>
+								</div>
+							</summary>
+							<div class="d-flex gap-2 mb-2 mt-2">
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="3"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="3"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="3"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="3"
+									value="13"
+								/>
+							</div>
+						</details>
+					</div>
+					<div class="relic-group" data-index="4">
+						<details class="relic-details">
+							<summary>
+								<div class="d-flex align-items-center w-100">
+									<label class="me-2 small text-muted mb-0">平均等級</label>
+									<input
+										type="number"
+										class="relic-big form-control"
+										data-group="4"
+										value="13"
+										aria-label="屬性5 平均等級"
+									/>
+								</div>
+							</summary>
+							<div class="d-flex gap-2 mb-2 mt-2">
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="4"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="4"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="4"
+									value="13"
+								/>
+								<input
+									type="number"
+									class="relic-small form-control"
+									data-group="4"
+									value="13"
+								/>
+							</div>
+						</details>
+					</div>
+				</div>
+			</div>
+
+			<div
+				class="result mt-4 p-3 border rounded pretty-text"
+				id="seasonResult"
+			></div>
+		</div>
+
+		<!-- Floating Button -->
+		<button class="floating-btn" id="dataBtn" title="保存數據與目標設定">
+			⚙️
+		</button>
+
+		<!-- Modal Overlay -->
+		<div class="modal-overlay" id="modalOverlay"></div>
+
+		<!-- Data Modal -->
+		<div id="dataModal">
+			<div class="modal-title">賽季數據管理</div>
+			<div style="margin-bottom: 16px; font-size: 0.9rem; color: #666">
+				<strong>保存當前狀態</strong>
+				<input
+					type="text"
+					id="saveName"
+					class="modal-input form-control mt-2"
+					placeholder="輸入存檔名稱 (如: 目標1)"
+				/>
+			</div>
+			<div style="margin-bottom: 16px; font-size: 0.9rem; color: #666">
+				<strong>目標設定</strong>
+				<input
+					type="number"
+					id="goalCore"
+					class="modal-input form-control"
+					placeholder="目標原初之心數值"
+				/>
+			</div>
+			<div style="margin-bottom: 16px; font-size: 0.9rem; color: #666">
+				<strong>已保存的狀態</strong>
+				<select id="savedStates" class="form-select">
+					<option value="">-- 選擇要載入的狀態 --</option>
+				</select>
+			</div>
+			<div class="modal-buttons d-flex gap-2">
+				<button class="btn btn-primary flex-grow-1" id="btnSave">
+					保存狀態
+				</button>
+				<button class="btn btn-success flex-grow-1" id="btnLoad">
+					載入狀態
+				</button>
+				<button class="btn btn-secondary" id="btnCloseModal">關閉</button>
+			</div>
+		</div>
+
+		<script src="season.js"></script>
+	</body>
+</html>
