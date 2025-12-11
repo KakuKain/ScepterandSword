@@ -296,5 +296,6 @@ $(document).ready(function() {
 		if (countdownInterval) clearInterval(countdownInterval);
 		localStorage.removeItem("levelCalcData");
 	});
+
 	calculate();
 });
