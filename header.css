@@ -7,8 +7,8 @@
 	position: sticky;
 	top: 0;
 	z-index: 50;
-	margin: 0 -28px 28px -28px;
 }
+
 
 .nav-content {
 	max-width: 880px;
@@ -53,10 +53,6 @@
 }
 
 @media (max-width: 576px) {
-	.page-nav {
-		margin: 0 -28px 20px -28px;
-		padding: 12px 0;
-	}
 	.nav-content {
 		flex-direction: column;
 		gap: 10px;

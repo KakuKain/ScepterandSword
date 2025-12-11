@@ -169,10 +169,10 @@ function performCalculation(){
     if(arr.length === 0) return '<div class="text-muted">無</div>';
     let out = '<ul class="list-group">';
     for(const it of arr){
-        out += `<li class="list-group-item align-items-center gap-2 py-2 ${it.important ? 'has-important' : ''}">
+        out += `<li class="list-group-item align-items-center gap-2 py-2 px-1 ${it.important ? 'has-important' : ''}">
           <div class="star-icon">${it.important ? '★' : ''}</div>
           <div class="flex-fill"><div class="small text-muted">${it.effect}</div></div>
-          <div style="min-width:64px;text-align:right"><span class="badge bg-primary">${it.need}</span></div>
+          <div style="min-width:64px;text-align:center;"><span class="badge bg-primary">${it.need}</span></div>
         </li>`;
     }
     out += '</ul>';
