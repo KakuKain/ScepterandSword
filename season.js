@@ -165,7 +165,7 @@ function computeScores() {
 	};
 }
 
-function updateSuggestionHints(season = 1) {
+function updateSuggestionHints(season = 2) {
   const targetCore = parseFloat($('#targetCore').val()) || 0;
   if (targetCore <= 0) {
     $('.suggestion-hint').empty();
@@ -176,19 +176,15 @@ function updateSuggestionHints(season = 1) {
   const rule = scoreRules[season];
   const lastCore = r.lastCore || 0;
 
-  // -------- 計算當前總分 --------
+  // -------- 當前總分 --------
   const roleScore = r.roleScore != null ? r.roleScore : r.roleLevel * rule.rolePerLevel;
   const equipScore = r.equipScore || 0;
   const skillScore = r.skillScore || 0;
   const beastScore = r.beastScore || 0;
   const relicScore = r.relicScore || 0;
-
   const currentScoreTotal = roleScore + equipScore + skillScore + beastScore + relicScore;
 
-  // -------- 計算目標總分 (不扣 bonusCore) --------
-  const targetScoreTotal = (targetCore - lastCore) * 27;
-
-  // 已達標判斷
+  // -------- 判斷是否已達標 --------
   const totalCoreExact = Math.floor(currentScoreTotal / 27) + (rule.seasonBonusCore || 0) + lastCore;
   if (totalCoreExact >= targetCore) {
     $('.suggestion-hint').html('✓ 已達標！').removeClass('text-muted').addClass('text-success');
@@ -196,10 +192,19 @@ function updateSuggestionHints(season = 1) {
   }
 
   // -------- 剩餘需要補的分數 --------
-  let remainingScore = targetScoreTotal - currentScoreTotal;
+  let remainingScore = (targetCore - lastCore) * 27 - currentScoreTotal;
   if (remainingScore < 0) remainingScore = 0;
 
-  // -------- 主項比例分配 --------
+  // -------- 古遺物先補最多兩等 --------
+  const relicDeltaMax = 2;
+  const relicScoreDelta = relicDeltaMax * rule.relicPerLevel;
+  const relicDelta = Math.min(remainingScore, relicScoreDelta) / rule.relicPerLevel;
+  const relicTarget = Math.max(r.relicAvg, Math.ceil(r.relicAvg + relicDelta));
+
+  remainingScore -= relicDelta * rule.relicPerLevel;
+  if (remainingScore < 0) remainingScore = 0;
+
+  // -------- 剩餘分配給主項 --------
   const mainTotalUnit =
     rule.rolePerLevel +
     rule.equipPerLevel * rule.equipCount +
@@ -216,22 +221,7 @@ function updateSuggestionHints(season = 1) {
   const skillDelta = remainingScore * skillWeight / (rule.skillPerLevel * rule.skillCount);
   const beastDelta = remainingScore * beastWeight / (rule.beastPerLevel * rule.beastCount);
 
-  // 已用掉的分數
-  const usedScore =
-    roleDelta * rule.rolePerLevel +
-    equipDelta * rule.equipPerLevel * rule.equipCount +
-    skillDelta * rule.skillPerLevel * rule.skillCount +
-    beastDelta * rule.beastPerLevel * rule.beastCount;
-
-  // -------- 古遺物補尾巴 (精準版) --------
-  let relicRemainingScore = remainingScore - usedScore;
-  if (relicRemainingScore < 0) relicRemainingScore = 0;
-
-  // 計算古遺物等級增量，Math.ceil 確保足夠達標
-  const relicDelta = relicRemainingScore / rule.relicPerLevel;
-  const relicTarget = Math.max(r.relicAvg, Math.ceil(r.relicAvg + relicDelta));
-
-  // -------- 建議等級 (不低於現有平均) --------
+  // -------- 建議等級 --------
   const roleTarget = Math.max(r.roleLevel, Math.ceil(r.roleLevel + roleDelta));
   const equipTarget = Math.max(r.equipAvg, Math.ceil(r.equipAvg + equipDelta));
   const skillTarget = Math.max(r.skillAvg, Math.ceil(r.skillAvg + skillDelta));
