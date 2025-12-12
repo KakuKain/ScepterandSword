@@ -38,7 +38,7 @@
 				line-height: 1.6;
 			}
 			.season-page {
-				max-width: 520px;
+				max-width: 600px;
 				background: white;
 				padding: 25px 28px;
 				border-radius: 16px;
@@ -171,7 +171,7 @@
 			/* modal & floating */
 			.floating-btn {
 				position: fixed;
-				right: calc((100vw - 700px) / 2 + 20px);
+				right: calc((100vw - 860px) / 2 + 20px);
 				bottom: 16px;
 				width: 80px;
 				height: 80px;
@@ -245,6 +245,19 @@
 				grid-template-columns: repeat(2, 1fr);
 				gap: 8px;
 			}
+			/* 各項目的建議提示 */
+			.equip-item,
+			.skill-item,
+			.beast-item {
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+			}
+			.suggestion-hint {
+				font-size: 0.85rem;
+				min-height: 18px;
+				line-height: 1.2;
+			}
 			/* slot compact enhancements */
 			.star-icon {
 				color: #f5c542;
@@ -316,7 +329,7 @@
 		<!-- 導航 Header -->
 		<nav class="page-nav">
 			<div class="nav-content">
-				<h2 class="nav-title">計算機</h2>
+				<h2 class="nav-title">杖劍傳說</h2>
 				<div class="nav-links">
 					<a href="index.html" class="nav-link">升級計算機</a>
 					<a href="season.html" class="nav-link active">賽季計算機</a>
@@ -341,27 +354,30 @@
 					<h4 class="m-0"><span class="icon" aria-hidden="true">🧸</span>角色</h4>
 					<span class="score-display" id="roleScoreDisplay">0</span>
 				</div>
-				<div class="d-flex gap-3 mb-2">
+				<div class="d-flex gap-3 mb-3">
 					<div class="flex-grow-1">
 						<label class="form-label small mb-1">角色等級</label>
-						<div class="d-flex gap-1">
-							<input
-								type="number"
-								id="roleLevel"
-								class="form-control"
-								value="150"
-								step="0.01"
-                                style="flex:1;"
-							/>
-							<button
-								type="button"
-								class="btn btn-sm btn-outline-secondary"
-								data-bs-toggle="collapse"
-								data-bs-target="#expCalc"
-								aria-expanded="false"
-							>
-								詳
-							</button>
+						<div class="d-flex gap-1" style="flex-direction: column;">
+							<div class="d-flex gap-1">
+								<input
+									type="number"
+									id="roleLevel"
+									class="form-control"
+									value="150"
+									step="0.01"
+	                                style="flex:1;"
+								/>
+								<button
+									type="button"
+									class="btn btn-sm btn-outline-secondary"
+									data-bs-toggle="collapse"
+									data-bs-target="#expCalc"
+									aria-expanded="false"
+								>
+									詳
+								</button>
+							</div>
+							<small class="suggestion-hint"></small>
 						</div>
 						<div id="expCalc" class="collapse mt-2 p-2 bg-light rounded">
 							<label class="form-label small mb-1">總經驗</label>
@@ -386,67 +402,141 @@
 							</button>
 						</div>
 					</div>
-					<div id="lastCoreDiv" class="flex-grow-1">
+				</div>
+				<div class="d-flex gap-3 mb-2">
+					<div class="flex-grow-1">
 						<label class="form-label small mb-1">已擁有原初之心</label>
 						<input type="number" id="lastCore" class="form-control" value="0" />
+					</div>
+					<div class="flex-grow-1">
+						<label class="form-label small mb-1">目標原初之心</label>
+						<div class="d-flex gap-2">
+							<input type="number" id="targetCore" class="form-control" placeholder="0" />
+							<button type="button" class="btn btn-primary btn-sm" id="calcBtn" style="white-space: nowrap;">計算</button>
+							<button type="button" class="btn btn-success btn-sm" id="applyBtn" style="white-space: nowrap;">套用</button>
+						</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="section">
 				<div class="section-head">
-					<h4 class="m-0"><span class="icon" aria-hidden="true">🧥</span>裝備</h4>
-					<span class="score-display" id="equipScoreDisplay">0</span>
+					<div style="display: flex; gap: 8px; align-items: center;">
+						<h4 class="m-0"><span class="icon" aria-hidden="true">🧥</span>裝備</h4>
+						<span class="score-display" id="equipScoreDisplay">0</span>
+					</div>
+					<input type="number" id="equipTarget" class="form-control" style="max-width: 100px;" placeholder="快速填寫" />
 				</div>
 				<div class="input-grid mb-2">
-					<input type="number" class="equip form-control" value="130" />
-					<input type="number" class="equip form-control" value="130" />
-					<input type="number" class="equip form-control" value="130" />
-					<input type="number" class="equip form-control" value="130" />
-					<input type="number" class="equip form-control" value="130" />
+					<div class="equip-item">
+						<input type="number" class="equip form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="equip-item">
+						<input type="number" class="equip form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="equip-item">
+						<input type="number" class="equip form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="equip-item">
+						<input type="number" class="equip form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="equip-item">
+						<input type="number" class="equip form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
 				</div>
 			</div>
 
 			<div class="section">
 				<div class="section-head">
-					<h4 class="m-0"><span class="icon" aria-hidden="true">⚔️</span>技能</h4>
-					<span class="score-display" id="skillScoreDisplay">0</span>
+					<div style="display: flex; gap: 8px; align-items: center;">
+						<h4 class="m-0"><span class="icon" aria-hidden="true">⚔️</span>技能</h4>
+						<span class="score-display" id="skillScoreDisplay">0</span>
+					</div>
+					<input type="number" id="skillTarget" class="form-control" style="max-width: 100px;" placeholder="快速填寫" />
 				</div>
 				<div class="input-grid mb-2">
-					<input type="number" class="skill form-control" value="130" />
-					<input type="number" class="skill form-control" value="130" />
-					<input type="number" class="skill form-control" value="130" />
-					<input type="number" class="skill form-control" value="130" />
-					<input type="number" class="skill form-control" value="130" />
-					<input type="number" class="skill form-control" value="130" />
-					<input type="number" class="skill form-control" value="130" />
-					<input type="number" class="skill form-control" value="130" />
+					<div class="skill-item">
+						<input type="number" class="skill form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="skill-item">
+						<input type="number" class="skill form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="skill-item">
+						<input type="number" class="skill form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="skill-item">
+						<input type="number" class="skill form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="skill-item">
+						<input type="number" class="skill form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="skill-item">
+						<input type="number" class="skill form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="skill-item">
+						<input type="number" class="skill form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="skill-item">
+						<input type="number" class="skill form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
 				</div>
 			</div>
 
 			<div class="section">
 				<div class="section-head">
-					<h4 class="m-0"><span class="icon" aria-hidden="true">😺</span>幻獸</h4>
-					<span class="score-display" id="beastScoreDisplay">0</span>
+					<div style="display: flex; gap: 8px; align-items: center;">
+						<h4 class="m-0"><span class="icon" aria-hidden="true">😺</span>幻獸</h4>
+						<span class="score-display" id="beastScoreDisplay">0</span>
+					</div>
+					<input type="number" id="beastTarget" class="form-control" style="max-width: 100px;" placeholder="快速填寫" />
 				</div>
 				<div class="input-grid mb-2">
-					<input type="number" class="beast form-control" value="130" />
-					<input type="number" class="beast form-control" value="130" />
-					<input type="number" class="beast form-control" value="130" />
-					<input type="number" class="beast form-control" value="130" />
+					<div class="beast-item">
+						<input type="number" class="beast form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="beast-item">
+						<input type="number" class="beast form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="beast-item">
+						<input type="number" class="beast form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
+					<div class="beast-item">
+						<input type="number" class="beast form-control" value="130" />
+						<small class="suggestion-hint"></small>
+					</div>
 				</div>
 			</div>
 
 			<div class="section">
 				<div class="section-head">
-					<h4 class="m-0"><span class="icon" aria-hidden="true">📺</span>古遺物</h4>
-					<span class="score-display" id="relicScoreDisplay">0</span>
+					
+					<div style="display: flex; gap: 8px; align-items: center;">
+						<h4 class="m-0"><span class="icon" aria-hidden="true">📺</span>古遺物</h4>
+						<span class="score-display" id="relicScoreDisplay">0</span>
+					</div>
+					<input type="number" id="relicTarget" class="form-control" style="max-width: 100px;" placeholder="快速填寫" />
 				</div>
 				<div id="relicContainer">
 					<div class="relic-group" data-index="0">
 						<details class="relic-details">
 							<summary>
-								<div class="d-flex align-items-center w-100">
+								<div class="d-flex align-items-center w-100 gap-2">
 									<label class="me-2 small text-muted mb-0">平均等級</label>
 									<input
 										type="number"
@@ -454,7 +544,9 @@
 										data-group="0"
 										value="13"
 										aria-label="屬性1 平均等級"
+										style="flex:1; max-width: 120px;"
 									/>
+									<small class="relic-suggestion-hint text-muted" style="min-width: 60px;"></small>
 								</div>
 							</summary>
 							<div class="d-flex gap-2 mb-2 mt-2">
@@ -488,7 +580,7 @@
 					<div class="relic-group" data-index="1">
 						<details class="relic-details">
 							<summary>
-								<div class="d-flex align-items-center w-100">
+								<div class="d-flex align-items-center w-100 gap-2">
 									<label class="me-2 small text-muted mb-0">平均等級</label>
 									<input
 										type="number"
@@ -496,7 +588,9 @@
 										data-group="1"
 										value="13"
 										aria-label="屬性2 平均等級"
+										style="flex:1; max-width: 120px;"
 									/>
+									<small class="relic-suggestion-hint text-muted" style="min-width: 60px;"></small>
 								</div>
 							</summary>
 							<div class="d-flex gap-2 mb-2 mt-2">
@@ -530,7 +624,7 @@
 					<div class="relic-group" data-index="2">
 						<details class="relic-details">
 							<summary>
-								<div class="d-flex align-items-center w-100">
+								<div class="d-flex align-items-center w-100 gap-2">
 									<label class="me-2 small text-muted mb-0">平均等級</label>
 									<input
 										type="number"
@@ -538,7 +632,9 @@
 										data-group="2"
 										value="13"
 										aria-label="屬性3 平均等級"
+										style="flex:1; max-width: 120px;"
 									/>
+									<small class="relic-suggestion-hint text-muted" style="min-width: 60px;"></small>
 								</div>
 							</summary>
 							<div class="d-flex gap-2 mb-2 mt-2">
@@ -572,7 +668,7 @@
 					<div class="relic-group" data-index="3">
 						<details class="relic-details">
 							<summary>
-								<div class="d-flex align-items-center w-100">
+								<div class="d-flex align-items-center w-100 gap-2">
 									<label class="me-2 small text-muted mb-0">平均等級</label>
 									<input
 										type="number"
@@ -580,7 +676,9 @@
 										data-group="3"
 										value="13"
 										aria-label="屬性4 平均等級"
+										style="flex:1; max-width: 120px;"
 									/>
+									<small class="relic-suggestion-hint text-muted" style="min-width: 60px;"></small>
 								</div>
 							</summary>
 							<div class="d-flex gap-2 mb-2 mt-2">
@@ -614,7 +712,7 @@
 					<div class="relic-group" data-index="4">
 						<details class="relic-details">
 							<summary>
-								<div class="d-flex align-items-center w-100">
+								<div class="d-flex align-items-center w-100 gap-2">
 									<label class="me-2 small text-muted mb-0">平均等級</label>
 									<input
 										type="number"
@@ -622,7 +720,9 @@
 										data-group="4"
 										value="13"
 										aria-label="屬性5 平均等級"
+										style="flex:1; max-width: 120px;"
 									/>
+									<small class="relic-suggestion-hint text-muted" style="min-width: 60px;"></small>
 								</div>
 							</summary>
 							<div class="d-flex gap-2 mb-2 mt-2">
